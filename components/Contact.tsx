@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
+import { categoryLabels } from "@/lib/contact";
 
 type FormState = {
   name: string;
@@ -29,10 +30,61 @@ const categories = [
 export default function Contact() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setError(null);
+
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      setError(
+        "メール送信の設定が未完了です。.env.local に NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY を設定し、サーバーを再起動してください。"
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    const categoryLabel = categoryLabels[form.category] ?? form.category;
+    const messageBody = [
+      `お名前: ${form.name}`,
+      `メール: ${form.email}`,
+      `会社名: ${form.company || "（未入力）"}`,
+      `種別: ${categoryLabel}`,
+      "",
+      "【お問い合わせ内容】",
+      form.message,
+    ].join("\n");
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `【お問い合わせ】${categoryLabel} — ${form.name} 様`,
+          from_name: form.name,
+          email: form.email,
+          replyto: form.email,
+          message: messageBody,
+        }),
+      });
+
+      const data = (await res.json()) as { success?: boolean; message?: string };
+
+      if (!res.ok || !data.success) {
+        setError(data.message ?? "送信に失敗しました。しばらくしてから再度お試しください。");
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setError("通信エラーが発生しました。ネットワークをご確認のうえ再度お試しください。");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateField = (field: keyof FormState, value: string) => {
@@ -97,6 +149,7 @@ export default function Contact() {
                 onClick={() => {
                   setSubmitted(false);
                   setForm(initialForm);
+                  setError(null);
                 }}
                 className="mt-6 text-sm text-blue-400 underline-offset-4 hover:underline"
               >
@@ -195,13 +248,23 @@ export default function Contact() {
                 />
               </motion.div>
 
+              {error && (
+                <p
+                  role="alert"
+                  className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+                >
+                  {error}
+                </p>
+              )}
+
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 py-3.5 text-base font-medium text-white shadow-lg shadow-blue-500/25 transition-shadow hover:shadow-blue-500/40"
+                disabled={isSubmitting}
+                whileHover={isSubmitting ? undefined : { scale: 1.02 }}
+                whileTap={isSubmitting ? undefined : { scale: 0.98 }}
+                className="w-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 py-3.5 text-base font-medium text-white shadow-lg shadow-blue-500/25 transition-shadow hover:shadow-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                送信する
+                {isSubmitting ? "送信中..." : "送信する"}
               </motion.button>
             </form>
           )}

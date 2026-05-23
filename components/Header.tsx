@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { navItems } from "@/lib/nav";
+import Logo, { COMPANY_NAME } from "@/components/Logo";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -41,16 +42,11 @@ export default function Header() {
           <a
             href="#hero"
             onClick={closeMenu}
-            className="group flex min-w-0 items-center gap-2"
-            aria-label="株式会社En（仮）トップへ"
+            className="group min-w-0 transition-opacity hover:opacity-90"
+            aria-label={`${COMPANY_NAME}トップへ`}
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500 text-xs font-bold text-white shadow-lg shadow-blue-500/25 transition-transform group-hover:scale-105 sm:h-9 sm:w-9 sm:text-sm">
-              En
-            </span>
-            <span className="hidden truncate text-sm font-medium text-slate-300 min-[400px]:block">
-              株式会社En
-              <span className="text-slate-500">（仮）</span>
-            </span>
+            <Logo size="sm" showText={false} className="sm:hidden" />
+            <Logo size="md" showText className="hidden sm:flex" />
           </a>
 
           <nav

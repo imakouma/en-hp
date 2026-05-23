@@ -66,7 +66,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.35 }}
           className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-slate-400 sm:text-xl"
         >
-          株式会社En（仮）は、最先端のAI技術とリアルな現場体験を融合し、
+          株式会社　縁RIGHTは、最先端のAI技術とリアルな現場体験を融合し、
           ビジネスの成長と人々の暮らしに新しい価値を届けるベンチャーです。
         </motion.p>
 

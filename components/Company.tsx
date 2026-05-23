@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 const companyInfo = [
-  { label: "会社名", value: "株式会社En（仮）" },
+  { label: "会社名", value: "株式会社　縁RIGHT" },
   { label: "代表者", value: "今村 宏麻" },
   { label: "所在地", value: "東京都小平市" },
   {

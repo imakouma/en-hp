@@ -20,9 +20,13 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "株式会社En（仮）| 人とAIを繋ぎ、リアルを動かす。",
+  title: "株式会社　縁RIGHT | 人とAIを繋ぎ、リアルを動かす。",
   description:
-    "AI×リアル融合ベンチャー。AIソリューション、イベントマーケティング、リノベーションプロジェクトで、人とAIを繋ぎリアルを動かします。",
+    "株式会社　縁RIGHT。AIシステム開発・導入支援、通信催事・イベントマーケティング、不動産リノベーションコミュニティ事業で、人とAIを繋ぎリアルを動かします。",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
